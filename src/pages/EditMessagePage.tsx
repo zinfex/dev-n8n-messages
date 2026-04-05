@@ -7,10 +7,11 @@ import Loader from '../components/Loader';
 import ErrorAlert from '../components/ErrorAlert';
 import type { ProblemDetails } from '../types/problem';
 import { useEffect, useState } from 'react';
+import { BiArrowBack, BiSave } from 'react-icons/bi';
 
 const schema = z.object({
     title: z.string().min(1, 'Título é obrigatório'),
-    body: z.string().min(10, 'Mínimo de 10 caracteres'),
+    description: z.string().min(10, 'Mínimo de 10 caracteres'),
     status: z.enum(['draft', 'published'])
 });
 
@@ -28,16 +29,15 @@ export default function EditMessagePage(){
         resolver: zodResolver(schema),
         defaultValues: {
             title: '',
-            body: '',
+            description: '',
             status: 'draft'
         }
     });
     
-    // Preencher formulário quando os dados chegarem
     useEffect(() => {
         if (message) {
             setValue('title', message.title);
-            setValue('body', message.body);
+            setValue('description', message.descricao);
             setValue('status', message.status);
         }
     }, [message, setValue]);
@@ -60,10 +60,14 @@ export default function EditMessagePage(){
     
     if (error) {
         return (
-            <div className="message-form-container fade-in">
-                <h2>Erro ao carregar mensagem</h2>
+            <div className="messages-container fade-in">
+                <div className="header">
+                    <button className="btn-close" onClick={() => navigate(-1)} style={{ marginRight: '12px' }}>
+                        <BiArrowBack />
+                    </button>
+                    <h2>Erro ao carregar</h2>
+                </div>
                 <ErrorAlert problem={error as unknown as ProblemDetails} />
-                
                 <button className="btn-secondary" onClick={() => navigate(-1)}>
                     Voltar
                 </button>
@@ -71,35 +75,33 @@ export default function EditMessagePage(){
         );
     }
     
-    if (!message) {
-        return (
-            <div className="message-form-container fade-in">
-                <h2>Mensagem não encontrada</h2>
-                <p>A mensagem que você está tentando editar não foi encontrada.</p>
-                <button className="btn-secondary" onClick={() => navigate('/messages')}>
-                    Voltar para lista
-                </button>
-            </div>
-        );
-    }
-    
     return (
-        <div className="message-form-container fade-in">
-            <h2>Editar mensagem</h2>
+        <div className="messages-container slide-up">
+            <div className="header">
+                <button className="btn-close" onClick={() => navigate(-1)} style={{ marginRight: '12px' }}>
+                    <BiArrowBack />
+                </button>
+                <h2>Editar mensagem</h2>
+            </div>
             
             <ErrorAlert problem={(update.error as ProblemDetails) || null} />
             
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} className="bubble-container" style={{ padding: '0' }}>
                 <div className="form-group">
                     <label>Título</label>
-                    <input {...register('title')} />
+                    <input {...register('title')} placeholder="Assunto..." />
                     {errors.title && <small className="error">{errors.title.message}</small>}
                 </div>
                 
                 <div className="form-group">
                     <label>Conteúdo</label>
-                    <textarea rows={6} {...register('body')} />
-                    {errors.body && <small className="error">{errors.body.message}</small>}
+                    <textarea 
+                        rows={8} 
+                        {...register('description')} 
+                        placeholder="Escreva sua mensagem aqui..."
+                        style={{ resize: 'none' }}
+                    />
+                    {errors.description && <small className="error">{errors.description.message}</small>}
                 </div>
                 
                 <div className="form-group">
@@ -110,14 +112,7 @@ export default function EditMessagePage(){
                     </select>
                 </div>
                 
-                <div className="form-actions">
-                    <button 
-                        type="submit" 
-                        className="btn-primary" 
-                        disabled={isSubmitting || update.isPending}
-                    >
-                        {isSubmitting || update.isPending ? 'Salvando...' : 'Salvar'}
-                    </button>
+                <div className="form-actions" style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
                     <button 
                         type="button" 
                         className="btn-secondary" 
@@ -125,6 +120,15 @@ export default function EditMessagePage(){
                         disabled={isSubmitting || update.isPending}
                     >
                         Cancelar
+                    </button>
+                    <button 
+                        type="submit" 
+                        className="btn-login" 
+                        disabled={isSubmitting || update.isPending}
+                        style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '0' }}
+                    >
+                        {isSubmitting || update.isPending ? 'Salvando...' : 'Salvar Alterações'}
+                        <BiSave />
                     </button>
                 </div>
             </form>

@@ -7,10 +7,11 @@ import Loader from '../components/Loader';
 import ErrorAlert from '../components/ErrorAlert';
 import type { ProblemDetails } from '../types/problem';
 import { useEffect } from 'react';
+import { BiArrowBack, BiSend } from 'react-icons/bi';
 
 const schema = z.object({
     title: z.string().min(1, 'Título é obrigatório'),
-    body: z.string().min(10, 'Mínimo de 10 caracteres'),
+    description: z.string().min(10, 'Mínimo de 10 caracteres'),
     status: z.enum(['draft', 'published'])
 });
 
@@ -24,27 +25,23 @@ export default function MessageFormPage(){
     const update = useUpdateMessage(id || '');
     const navigate = useNavigate();
     
-    console.log('MessageFormPage - id:', id, 'isEdit:', isEdit, 'data:', data, 'isLoading:', isLoading);
-    
     const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(schema) });
     
     useEffect(()=>{
         if (isEdit && data) {
             setValue('title', data.title);
-            setValue('body', data.body);
+            setValue('description', data.descricao);
             setValue('status', data.status);
         }
     }, [isEdit, data, setValue]);
 
-    // Reset form when switching between create/edit
     useEffect(() => {
         if (!isEdit) {
             setValue('title', '');
-            setValue('body', '');
+            setValue('description', '');
             setValue('status', 'draft');
         }
     }, [isEdit, setValue]);
-    
     
     async function onSubmit(values: FormData){
         try {
@@ -57,7 +54,6 @@ export default function MessageFormPage(){
             }
         } catch (error) {
             console.error('Erro ao salvar mensagem:', error);
-            // Error is handled via ErrorAlert component
         }
     }
     
@@ -65,57 +61,66 @@ export default function MessageFormPage(){
 
     const problem = (create.error || update.error || error) as ProblemDetails | null;
 
-
     return (
-        <div className="message-form-container fade-in">
-            <h2>{isEdit ? 'Editar mensagem' : 'Nova mensagem'}</h2>
+        <div className="messages-container slide-up">
+            <div className="header">
+                <button className="btn-close" onClick={() => navigate(-1)} style={{ marginRight: '12px' }}>
+                    <BiArrowBack />
+                </button>
+                <h2>{isEdit ? 'Editar mensagem' : 'Nova mensagem'}</h2>
+            </div>
 
             <ErrorAlert problem={problem} />
 
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} className="bubble-container" style={{ padding: '0' }}>
                 <div className="form-group">
-                <label>Título</label>
-                <input {...register('title')} />
-                {errors.title && <small className="error">{errors.title.message}</small>}
+                    <label>Título da Mensagem</label>
+                    <input {...register('title')} placeholder="Assunto..." />
+                    {errors.title && <small className="error">{errors.title.message}</small>}
                 </div>
 
                 <div className="form-group">
-                <label>Conteúdo</label>
-                <textarea rows={6} {...register('body')} />
-                {errors.body && <small className="error">{errors.body.message}</small>}
+                    <label>Conteúdo</label>
+                    <textarea 
+                        rows={8} 
+                        {...register('description')} 
+                        placeholder="Escreva sua mensagem aqui..."
+                        style={{ resize: 'none' }}
+                    />
+                    {errors.description && <small className="error">{errors.description.message}</small>}
                 </div>
 
                 <div className="form-group">
-                <label>Status</label>
-                <select {...register('status')}>
-                    <option value="draft">Rascunho</option>
-                    <option value="published">Publicado</option>
-                </select>
+                    <label>Status da Mensagem</label>
+                    <select {...register('status')}>
+                        <option value="draft">Rascunho (Salvar para depois)</option>
+                        <option value="published">Publicado (Enviar agora)</option>
+                    </select>
                 </div>
 
-                <div className="form-actions">
-                <button 
-                    type="submit" 
-                    className="btn-primary" 
-                    disabled={create.isPending || update.isPending}
-                >
-                    {isEdit 
-                        ? (update.isPending ? 'Salvando...' : 'Salvar') 
-                        : (create.isPending ? 'Criando...' : 'Criar')
-                    }
-                </button>
-                <button 
-                    type="button" 
-                    className="btn-secondary" 
-                    onClick={() => navigate(-1)}
-                    disabled={create.isPending || update.isPending}
-                >
-                    Cancelar
-                </button>
+                <div className="form-actions" style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
+                    <button 
+                        type="button" 
+                        className="btn-secondary" 
+                        onClick={() => navigate(-1)}
+                        disabled={create.isPending || update.isPending}
+                    >
+                        Cancelar
+                    </button>
+                    <button 
+                        type="submit" 
+                        className="btn-login" 
+                        disabled={create.isPending || update.isPending}
+                        style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '0' }}
+                    >
+                        {isEdit 
+                            ? (update.isPending ? 'Salvando...' : 'Salvar') 
+                            : (create.isPending ? 'Enviando...' : 'Enviar')
+                        }
+                        <BiSend />
+                    </button>
                 </div>
             </form>
-
-            
         </div>
     );
 }

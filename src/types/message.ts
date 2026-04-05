@@ -1,7 +1,7 @@
 export type Message = {
     id: string;
     title: string;
-    body: string;
+    descricao: string;
     status: 'draft' | 'published';
     created_at: string;
     updated_at: string;

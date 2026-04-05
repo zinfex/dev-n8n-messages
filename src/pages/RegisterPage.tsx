@@ -25,29 +25,33 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="login-container fade-in">
-            <h2 style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><BiUserPlus /> Registrar</h2>
+        <div className="login-container slide-up">
+            <div className="chat-avatar" style={{ margin: '0 auto 1.5rem', width: '64px', height: '64px', fontSize: '1.5rem', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}>
+                <BiUserPlus />
+            </div>
+            <h2>Criar conta</h2>
+            <p style={{ color: 'var(--muted)', marginBottom: '2rem' }}>Junte-se à nossa comunidade</p>
 
             <ErrorAlert problem={(createUser.error as ProblemDetails) ?? null} />
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group">
                     <label>Usuário</label>
-                    <input {...register('username')} />
+                    <input {...register('username')} placeholder="Escolha um usuário" />
                     {errors.username && <small className="error">{errors.username.message}</small>}
                 </div>
 
                 <div className="form-group">
                     <label>Senha</label>
-                    <input type="password" {...register('password')} />
+                    <input type="password" {...register('password')} placeholder="••••••••" />
                     {errors.password && <small className="error">{errors.password.message}</small>}
                 </div>
 
-                <button type="submit" className="btn-login" disabled={createUser.isPending}>
+                <button type="submit" className="btn-login" disabled={createUser.isPending} style={{ background: '#10b981' }}>
                     {createUser.isPending ? 'Registrando...' : 'Registrar'}
                 </button>
-                <button type="button" className="btn-register" style={{ marginLeft: 12 }} onClick={() => navigate('/login')}>
-                    Já tem conta? Entrar
+                <button type="button" className="btn-register" onClick={() => navigate('/login')} style={{ border: 'none' }}>
+                    Já tem conta? <span style={{ fontWeight: 'bold', color: '#10b981' }}>Fazer login</span>
                 </button>
             </form>
         </div>

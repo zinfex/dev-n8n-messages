@@ -25,29 +25,33 @@ async function onSubmit(values: FormData) {
 }
 
 return (
-    <div className="login-container fade-in">
-        <h2 style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><BiUser /> Login</h2>
+    <div className="login-container slide-up">
+        <div className="chat-avatar" style={{ margin: '0 auto 1.5rem', width: '64px', height: '64px', fontSize: '1.5rem' }}>
+            <BiUser />
+        </div>
+        <h2>Bem-vindo</h2>
+        <p style={{ color: 'var(--muted)', marginBottom: '2rem' }}>Faça login para continuar</p>
 
         <ErrorAlert problem={(login.error as ProblemDetails) ?? null} />
 
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className="form-group">
-            <label>Usuário</label>
-            <input {...register('username')} />
-            {errors.username && <small className="error">{errors.username.message}</small>}
+                <label>Usuário</label>
+                <input {...register('username')} placeholder="Seu usuário" />
+                {errors.username && <small className="error">{errors.username.message}</small>}
             </div>
 
             <div className="form-group">
-            <label>Senha</label>
-            <input type="password" {...register('password')} />
-            {errors.password && <small className="error">{errors.password.message}</small>}
+                <label>Senha</label>
+                <input type="password" {...register('password')} placeholder="••••••••" />
+                {errors.password && <small className="error">{errors.password.message}</small>}
             </div>
 
             <button type="submit" className="btn-login" disabled={login.isPending}>
-            {login.isPending ? 'Entrando...' : 'Entrar'}
+                {login.isPending ? 'Entrando...' : 'Entrar'}
             </button>
-            <button type="button" className="btn-register" onClick={() => navigate('/register')}>
-            Criar conta
+            <button type="button" className="btn-register" onClick={() => navigate('/register')} style={{ border: 'none' }}>
+                Não tem uma conta? <span style={{ fontWeight: 'bold' }}>Cadastre-se</span>
             </button>
         </form>
     </div>
