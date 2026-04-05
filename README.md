@@ -1,4 +1,6 @@
 # 📨 CRUD de Mensagens — Frontend (React + N8N + Supabase)
+<img width="725" height="432" alt="image" src="https://github.com/user-attachments/assets/7f2c9de9-0105-45fd-97ae-3d03b2f8a5ef" />
+<img width="706" height="540" alt="image" src="https://github.com/user-attachments/assets/ec5ef3dd-46f4-4167-8eef-01c1528b6744" />
 
 Uma aplicação frontend que consome uma API **RESTful do n8n** (com Supabase como banco de dados).  
 
